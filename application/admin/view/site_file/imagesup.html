@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="__PLG__/layui/css/layui.css" media="all">
+    <link rel="stylesheet" href="__CSS__/font-awesome.min.css">
+    <script src="__JS__/jquery.min.js"></script>
+    <script src="__PLG__/layui/layui.all.js"></script>
+    <style>
+        .upfile{
+            padding: 15px;
+        }
+        #upimage{
+            margin: 15px auto;
+            width: 320px;
+            display: block;
+        }
+        .imglist{
+            padding: 30px 0px;
+            overflow: hidden;
+        }
+        .imglist .item{
+            width: 98px;
+            height: 118px;
+            position: relative;
+            display: inline;
+            float: left;
+            margin-left: 9px;
+            margin-bottom: 25px;
+        }
+        .imglist .item img{
+            width: 98px;
+            height: 88px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .imglist .item .file-panel{
+            height: 20px;
+            display: flex;
+        }
+        .imglist .item .file-panel span{
+            flex: 1;
+        }
+        .imglist .item .status{
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background: rgba(0,0,0,0.5);
+            color: #fff;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="upfile">
+    <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="upfilebtn">上传图片</button>
+    <div class="imglist" id="imglist">
+
+    </div>
+    <div class="row">
+        <button type="button" class="layui-btn layui-btn-sm layui-btn-normal" id="beginUpAction">开始上传</button>
+    </div>
+</div>
+<script>
+    var upfile_index = parent.layer.getFrameIndex(window.name);
+    var imglist = $('#imglist'),
+    uploadListIns = layui.upload.render({
+        elem: '#upfilebtn'
+        ,url: '/api/upload/upload'
+        ,accept: 'images'
+        ,multiple: true
+        ,auto: false
+        ,bindAction: '#beginUpAction'
+        ,choose: function(obj){
+            var files = this.files = obj.pushFile(); //将每次选择的文件追加到文件队列
+            //读取本地文件
+            obj.preview(function(index, file, result){
+                var item = $([
+                    '<div class="item" id="upload-'+ index +'">'
+                    ,'<img src="'+ result +'">'
+                    ,'<div class="status">等待上传</div>'
+                    ,'<div class="file-panel">'
+                    ,'<span class="layui-btn layui-btn-xs layui-btn-primary  item-delete" title="删除"><i class="fa fa-trash-o"></i></span>'
+                    ,'<span class="layui-btn layui-btn-xs layui-btn-primary layui-hide item-reload" title="重新上传"><i class="fa fa-refresh"></i></span>'
+                    ,'</div>'
+                    ,'</div>'].join(''));
+
+                //单个重传
+                item.find('.item-reload').on('click', function(){
+                    obj.upload(index, file);
+                });
+
+                //删除
+                item.find('.item-delete').on('click', function(){
+                    delete files[index]; //删除对应的文件
+                    item.remove();
+                    uploadListIns.config.elem.next()[0].value = ''; //清空 input file 值，以免删除后出现同名文件不可选
+                });
+
+                imglist.append(item);
+            });
+        }
+        ,done: function(res, index, upload){
+            //上传完毕
+
+            if(res.error == 0){
+                var item = imglist.find('div#upload-'+ index);
+                var status = item.find('.status');
+                status.css({'background-color': 'green'})
+                status.text('上传成功');
+                item.find('.item-delete').addClass('layui-hide');
+
+                return delete this.files[index];
+            }
+            this.error(index, upload);
+        }
+        ,error: function(index, upload){
+            var item = imglist.find('div#upload-'+ index);
+            var status = item.find('.status');
+            status.css({'background-color': 'red'})
+            status.text('上传失败');
+            item.find('.item-reload').removeClass('layui-hide');
+        }
+        ,allDone: function(obj){
+            if(obj.total == obj.successful){
+                layer.msg('全部上传成功', {
+                    time:2000,
+                }, function () {
+                    parent.layer.close(upfile_index);
+                    parent.layer.iframeSrc(parent.layerindexfirst, '/index.php/admin/site_file/images')
+                });
+            }
+        }
+    });
+
+    // parent.layer.close(parent.layerindexfirst);
+</script>
+</body>
+</html>

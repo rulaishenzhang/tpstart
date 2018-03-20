@@ -1,0 +1,56 @@
+{extend name="base" /}
+{block name="body"}
+<div class="layui-body">
+    <!--tab标签-->
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class=""><a href="{:url('admin/dict/index')}">字典管理</a></li>
+            <li class=""><a href="{:url('admin/dict/add')}">添加字典</a></li>
+            <li class="layui-this">编辑字典</li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <form class="layui-form form-container" action="{:url('admin/dict/update')}" method="post">
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">所属分类</label>
+                        <div class="layui-input-block">
+                            <select name="cid" lay-verify="required">
+                                <option value=""></option>
+                                {volist name="dict_category" id="v"}
+                                <option value="{$v.id}" {if condition="$v.id == $result.cid"}selected="selected"{/if}>{$v.name}</option>
+                                {/volist}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">字典名称</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="name" value="{$result.name}" required  lay-verify="required" placeholder="请输入名称" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">字典别名</label>
+                        <div class="layui-input-block">
+                            <input type="text" name="ename" value="{$result.ename}" required  lay-verify="required" placeholder="请输入别名（英文、拼音）" class="layui-input">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">状态</label>
+                        <div class="layui-input-block">
+                            <input type="radio" name="status" value="1" title="正常" {if condition="$result.status == 1"}checked{/if}>
+                            <input type="radio" name="status" value="0" title="停用" {if condition="!$result.status"}checked{/if}>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input type="hidden" name="id" value="{$result.id}">
+                            <button class="layui-btn" lay-submit lay-filter="*">保存</button>
+                            <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}

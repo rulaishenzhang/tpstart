@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="__PLG__/layui/css/layui.css" media="all">
+    <style>
+        .imagesbox{
+
+        }
+        .pull-right{
+            float: right;
+        }
+        .pull-left{
+            float: left;
+        }
+        .upimagesbox{
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            overflow: hidden;
+            border-bottom: 1px solid #eee;
+            padding: 15px;
+        }
+        .imglist{
+            padding: 15px;
+            height: 375px;
+        }
+        .imglist .item{
+            width: 98px;
+            height: 98px;
+            position: relative;
+            display: inline;
+            float: left;
+            margin-left: 18px;
+            margin-bottom: 25px;
+            border:1px solid #e7e7eb;
+            cursor: pointer;
+        }
+        .imglist .item:hover, .imglist .cur{
+            border: 1px solid #1E9FFF;
+        }
+        .imglist .item img{
+            width: 98px;
+            height: 98px;
+            display: block;
+        }
+        .imgbottom{
+            background: #F8F8F8;
+            height: 30px;
+            border-top: 1px solid #eee;
+            padding: 6px 20px;
+        }
+
+        /*分页*/
+        .pagination {}
+        .pagination li {display: inline-block;margin-right: -1px;padding: 5px;border: 1px solid #e2e2e2;min-width: 20px;text-align: center;}
+        .pagination li.active {background: #009688;color: #fff;border: 1px solid #009688;}
+        .pagination li a {display: block;text-align: center;}
+
+    </style>
+</head>
+<body>
+<div class="imagesbox">
+    <div class="upimagesbox">
+        <div class="pages pull-left">{$result->render()}</div>
+        <button class="layui-btn layui-btn-normal pull-right layui-btn-sm upimages">上传图片</button>
+    </div>
+    <div class="imglist">
+        {volist name="result" id="v"}
+        <div class="item" fileid="{$v.id}" filepath="{$v.path}">
+            <img src="{$v.path}" alt="">
+        </div>
+        {/volist}
+    </div>
+    <div class="imgbottom">
+        <button class="layui-btn layui-btn-sm layui-hide orderbtn">确认</button>
+    </div>
+</div>
+<script src="__JS__/jquery.min.js"></script>
+<script src="__PLG__/layui/layui.all.js"></script>
+<script>
+    var images_index = parent.layer.getFrameIndex(window.name);
+    parent.layerindexfirst = images_index;
+    /**
+     * 通用上传图片
+     */
+    $('.upimages').on('click', function () {
+        var upimagesindex = parent.layer.open({
+            type: 2,
+            title: '上传图片',
+            shadeClose: true,
+            shade: 0.8,
+            area: ['785px', '553px'],
+            content: '/index.php/admin/site_file/imagesup' //iframe的url
+        });
+    })
+
+    $(".imglist .item").on('click', function () {
+        $(this).addClass('cur').siblings('.item').removeClass('cur');
+        var fileid = $(this).attr('fileid'),
+            filepath = $(this).attr('filepath');
+        $(".orderbtn").removeClass('layui-hide');
+        $(".orderbtn").on('click', function(){
+            parent.$("#thumb").val(fileid);
+            parent.$("#imgthumb").html('<img src="'+ filepath +'" />');
+            parent.layer.close(images_index);
+        })
+
+    })
+
+</script>
+</body>
+</html>

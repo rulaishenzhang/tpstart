@@ -1,0 +1,43 @@
+{extend name="base" /}
+{block name="body"}
+<div class="layui-body">
+    <!--tab标签-->
+    <div class="layui-tab layui-tab-brief">
+        <ul class="layui-tab-title">
+            <li class="layui-this">字典管理</li>
+            <li class=""><a href="{:url('admin/dict/add')}">添加字典</a></li>
+        </ul>
+        <div class="layui-tab-content">
+            <div class="layui-tab-item layui-show">
+                <table class="layui-table">
+                    <thead>
+                    <tr>
+                        <th style="width: 30px;">ID</th>
+                        <th>类别</th>
+                        <th>名称</th>
+                        <th>别名</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {foreach name="dict_list" id="vo"}
+                    <tr>
+                        <td>{$vo.id}</td>
+                        <td>{$vo.cid|getDictCategory="name",###}</td>
+                        <td>{$vo.name}</td>
+                        <td>{$vo.ename}</td>
+                        <td>
+                            <a href="{:url('admin/dict/edit',['id'=>$vo['id']])}" class="layui-btn layui-btn-normal layui-btn-xs">编辑</a>
+                            <a href="{:url('admin/dict/delete',['id'=>$vo['id']])}" class="layui-btn layui-btn-danger layui-btn-xs ajax-delete">删除</a>
+                        </td>
+                    </tr>
+                    {/foreach}
+                    </tbody>
+                </table>
+                <!--分页-->
+                {$dict_list->render()}
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
