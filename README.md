@@ -24,7 +24,9 @@ TP START 1.0
 
 3、配置application下的database.php 数据库链接信息
 
-4、打开网址就可以访问了
+4、进去根目录 执行 composer install
+
+5、打开网址就可以访问了
 
 ## 初始账号密码
 
